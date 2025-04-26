@@ -46,6 +46,11 @@ class DecodeScreen(QMainWindow):
         self.decode_button.clicked.connect(self.decode_image)
         self.right_layout.addWidget(self.decode_button)
 
+        # Back to main screen button
+        self.back_button = QPushButton("Back to Main Screen")
+        self.back_button.clicked.connect(self.return_to_main)
+        self.right_layout.addWidget(self.back_button)
+
         self.layout.addLayout(self.right_layout)
         self.setCentralWidget(frame)
 
@@ -131,6 +136,12 @@ class DecodeScreen(QMainWindow):
     def copy_to_clipboard(self, password):
         clipboard = QApplication.clipboard()
         clipboard.setText(password)
+
+    def return_to_main(self):
+        from gui_main import MainScreen  # Import here to avoid circular imports
+        self.main_screen = MainScreen()
+        self.main_screen.show()
+        self.close()
 
 
 if __name__ == "__main__":
