@@ -12,8 +12,32 @@ def binary_to_password(binary_data, delimiter = "#end#"): #takes the binary pass
     return password
 
 def decode_password_from_image(image_path): #decodes the encoded image, getting up binary data to convert into a password.
-    img = Image.open(image_path)
-    img = img.convert('RGB')
-    width, height = img.size
+#opens the image and converts it to RGB format so we can read the pixel RGB values.
+    img = Image.open(image_path).convert('RGB') 
 
+    #find width and height of the image, so we can calculate the maximum capacity of the image.
+    width, height = img.size()
+
+    #gets the pixel data from the image, and inserts it into a list. 
+    pixels = list(img.getdata()) 
+
+#from here, with this pixel data, we need to convert to binary, and then read the pixel data for the password.
+#after that is done, we will return the pasword.
+    
+    #flattens the pixel data into a single list. (R, G, B ,R, G, B, R, G, B...)
+    #we can take this logic and apply it to the encoding function here.
+    flattened_pixels = [] 
+    for r, g, b in pixels:
+        flattened_pixels.extend([format(r, '08b'), format(g, '08b'), format(b, '08b')]) 
+
+    #take the lsb of each pixel, and then combine them into a single string.
+    binary_data = []
+    for pixel in flattened_pixels:
+        lsb = int(pixel[-1]) 
+        binary_data.append(str(lsb))
+    binary_data_string = ''.join(binary_data) #this will combine the binary data into a single string.
+
+    #with this data, we can then convert it back into a password.
+    password = binary_to_password(binary_data_string) #this here will convert the binary data into a password until it hits the delimiter.
+    #return the password we decoded from the image. 
     return password
