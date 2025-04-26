@@ -91,20 +91,57 @@ class PasswordScreen(QMainWindow):
         self.password_input.setPlaceholderText("Enter password here")
         self.layout.addWidget(self.password_input)
 
-        self.encode_button = QPushButton("Encode Image")
+        self.name_button = QPushButton("Next")
+        self.name_button.clicked.connect(self.openNamingScreen)
+        self.layout.addWidget(self.name_button)
+
+        self.setCentralWidget(frame)
+
+    def openNamingScreen(self):
+        password = self.password_input.text()
+        if self.image and password:
+            # Call the naming screen with the image and password
+            self.naming_screen = NamingScreen(self.image, password)
+            self.naming_screen.show()
+            self.close()
+
+
+class NamingScreen(QMainWindow):
+    def __init__(self, image, password):
+        super().__init__()
+        self.setWindowTitle("Set Image Name")
+        self.setMinimumSize(400, 300)
+
+        self.image = image  # Store the image passed from the previous screen
+        self.password = password  # Store the password passed from the previous screen
+
+        frame = QFrame()
+        self.layout = QVBoxLayout(frame)
+        self.layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.label = QLabel("Enter a name for the encoded image:")
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label.setStyleSheet("font-size: 24px; font-weight: bold; color: white;")
+        self.layout.addWidget(self.label)
+
+        self.name_input = QLineEdit()
+        self.name_input.setPlaceholderText("Enter image name here (e.g., encoded_image.png)")
+        self.layout.addWidget(self.name_input)
+
+        self.encode_button = QPushButton("Save Encoded Image")
         self.encode_button.clicked.connect(self.encode_image)
         self.layout.addWidget(self.encode_button)
 
         self.setCentralWidget(frame)
 
     def encode_image(self):
-        password = self.password_input.text()
-        if self.image and password:
+        image_name = self.name_input.text()
+        if self.image and self.password and image_name:
             try:
-                # Call the imageEncoder function with the provided password
-                imageEncoder.encode_password_in_image(self.image, password, "Encoded Passwords/encoded_image.png")
+                # Call the imageEncoder function with the provided password and image name
+                imageEncoder.encode_password_in_image(self.image, self.password, f"Encoded Passwords/{image_name}.png")
                 print("Image encoding completed.")
-                
+
                 # Show the success screen
                 self.success_screen = SuccessScreen()
                 self.success_screen.show()
