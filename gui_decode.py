@@ -101,6 +101,6 @@ if __name__ == "__main__":
         color: white;
     }
     """)
-    window = EncodeScreen()
+    window = DecodeScreen()
     window.show()
     sys.exit(app.exec_())
