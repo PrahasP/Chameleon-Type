@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QIcon
 from PIL import Image
-
+import imageDecoder
 
 class DecodeScreen(QMainWindow):
     def __init__(self):
@@ -15,7 +15,7 @@ class DecodeScreen(QMainWindow):
         self.setWindowTitle("The Lion: Encode")
         self.setMinimumSize(600, 400)
 
-        self.image = None  # Image that we're gonna encode
+        self.image = None  # Image that we're gonna decode
 
         # Main layout
         frame = QFrame()
@@ -40,6 +40,12 @@ class DecodeScreen(QMainWindow):
         self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.right_layout.addWidget(self.image_label)
 
+        # Decode button
+        self.decode_button = QPushButton("Decode Image")
+        self.decode_button.setEnabled(False)
+        self.decode_button.clicked.connect(self.decode_image)
+        self.right_layout.addWidget(self.decode_button)
+
         self.layout.addLayout(self.right_layout)
         self.setCentralWidget(frame)
 
@@ -62,12 +68,69 @@ class DecodeScreen(QMainWindow):
         file_path = item.data(Qt.UserRole)
         pixmap = QPixmap(file_path).scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio)
         self.image_label.setPixmap(pixmap)
+        self.image = Image.open(file_path)
+        self.decode_button.setEnabled(True)
 
-    def open_file_explorer(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Open Image File", "", "PNG Files (*.png)")
-        if file_path:
-            pixmap = QPixmap(file_path).scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio)
-            self.image_label.setPixmap(pixmap)
+    def decode_image(self):
+        if self.image is not None:
+            password = imageDecoder.decode_password_from_image(self.image)
+
+            # Show the password on a new screen
+            self.show_password_screen(password)
+
+    def show_password_screen(self, password):
+        self.password_window = QMainWindow(self)
+        self.password_window.setWindowTitle("Decoded Password")
+        self.password_window.setMinimumSize(400, 200)
+
+        layout = QVBoxLayout()
+
+        # Password label with hidden text
+        self.password_label = QLabel("Decoded Password: ********")
+        self.password_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.password_label.setStyleSheet("font-size: 18px; font-weight: bold; color: white;")
+        layout.addWidget(self.password_label)
+
+        # Show password on hover
+        self.password_label.setToolTip(password)
+        self.password_label.setStyleSheet("""
+            font-size: 18px; 
+            font-weight: bold; 
+            color: white;
+        """)
+        self.password_label.setToolTipDuration(0)  # Ensures the tooltip stays visible
+        self.password_label.setToolTip(password)
+        self.setStyleSheet("""
+            QToolTip { 
+            background-color: black; 
+            color: white; 
+            border: 1px solid white; 
+            font-size: 14px; 
+            }
+        """)
+
+        # Copy to clipboard button
+        self.copy_button = QPushButton("Copy to Clipboard")
+        self.copy_button.setStyleSheet("""
+            font-size: 14px; 
+            font-weight: bold; 
+            color: white; 
+            background-color: rgb(60, 90, 255;
+            QPushButton:pressed {
+                background-color: rgb(30, 60, 200);
+            }
+        """)
+        self.copy_button.clicked.connect(lambda: self.copy_to_clipboard(password))
+        layout.addWidget(self.copy_button)
+
+        frame = QFrame()
+        frame.setLayout(layout)
+        self.password_window.setCentralWidget(frame)
+        self.password_window.show()
+
+    def copy_to_clipboard(self, password):
+        clipboard = QApplication.clipboard()
+        clipboard.setText(password)
 
 
 if __name__ == "__main__":

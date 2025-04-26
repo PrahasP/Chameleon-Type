@@ -1,8 +1,10 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QFrame, QPushButton, QLabel, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QFrame, QPushButton, QLabel, QFileDialog, QLineEdit
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PIL import Image
+import imageEncoder
+
 
 class EncodeScreen(QMainWindow):
     def __init__(self):
@@ -11,6 +13,7 @@ class EncodeScreen(QMainWindow):
         self.setMinimumSize(400, 300)
 
         self.image = None  # Image that we're gonna encode
+        self.encoded_password = None  # Placeholder for the encoded password
 
         frame = QFrame()
         self.layout = QVBoxLayout(frame)
@@ -28,6 +31,8 @@ class EncodeScreen(QMainWindow):
         self.file_button = QPushButton("Open File Explorer")
         self.file_button.clicked.connect(self.open_file_explorer)
         self.layout.addWidget(self.file_button)
+
+        self.encode_button = None  # Placeholder for the encode button
 
         self.setCentralWidget(frame)
 
@@ -49,8 +54,59 @@ class EncodeScreen(QMainWindow):
                     # Show image preview
                     pixmap = QPixmap(file_path)
                     self.image_label.setPixmap(pixmap.scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio))
+
+                    # Add the "Encode this image" button if it doesn't exist
+                    if not self.encode_button:
+                        self.encode_button = QPushButton("Encode this image")
+                        self.encode_button.clicked.connect(self.go_to_password_screen)
+                        self.layout.addWidget(self.encode_button)
                 except Exception as e:
                     print("Failed to load image:", e)
+
+    def go_to_password_screen(self):
+        if self.image:
+            self.password_screen = PasswordScreen(self.image)
+            self.password_screen.show()
+            self.close()
+
+
+class PasswordScreen(QMainWindow):
+    def __init__(self, image):
+        super().__init__()
+        self.setWindowTitle("Enter Password")
+        self.setMinimumSize(400, 300)
+
+        self.image = image  # Store the image passed from the previous screen
+
+        frame = QFrame()
+        self.layout = QVBoxLayout(frame)
+        self.layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.label = QLabel("Enter a password to encode:")
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label.setStyleSheet("font-size: 24px; font-weight: bold; color: white;")
+        self.layout.addWidget(self.label)
+
+        self.password_input = QLineEdit()
+        self.password_input.setPlaceholderText("Enter password here")
+        self.layout.addWidget(self.password_input)
+
+        self.encode_button = QPushButton("Encode Image")
+        self.encode_button.clicked.connect(self.encode_image)
+        self.layout.addWidget(self.encode_button)
+
+        self.setCentralWidget(frame)
+
+    def encode_image(self):
+        password = self.password_input.text()
+        if self.image and password:
+            try:
+                # Call the imageEncoder function with the provided password
+                imageEncoder.encode_password_in_image(self.image, password, "Encoded Passwords/encoded_image.png")
+                print("Image encoding completed.")
+                self.close()
+            except Exception as e:
+                print("Failed to encode image:", e)
 
 
 if __name__ == "__main__":
@@ -70,6 +126,10 @@ if __name__ == "__main__":
     }
     QPushButton::hover {
         background-color: rgb(60, 20, 255);
+    }
+    QLineEdit {
+        padding: 5px;
+        font-size: 14px;
     }
     """)
     window = EncodeScreen()
