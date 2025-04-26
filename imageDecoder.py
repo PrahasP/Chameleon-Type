@@ -1,6 +1,6 @@
 from PIL import Image
 
-def binary_to_password(binary_data, delimiter = "#end#"): #takes the binary password that would be decoded and convert it back into characters to use.
+def binary_to_password(binary_data: str, delimiter: str = "#end#") -> str: #takes the binary password that would be decoded and convert it back into characters to use.
     #breaks apart the binary into each character( 8 bit)
     chars = [binary_data [i : i + 8] for i in range(0, len(binary_data), 8)] 
 
@@ -11,12 +11,12 @@ def binary_to_password(binary_data, delimiter = "#end#"): #takes the binary pass
     password = decoded.split(delimiter)[0] 
     return password
 
-def decode_password_from_image(image_path): #decodes the encoded image, getting up binary data to convert into a password.
+def decode_password_from_image(image: Image.Image): #decodes the encoded image, getting up binary data to convert into a password.
     #opens the image and converts it to RGB format so we can read the pixel RGB values.
-    img = Image.open(image_path).convert('RGB') 
+    image = image.convert('RGB')
 
     #gets the pixel data from the image, and inserts it into a list. 
-    pixels = list(img.getdata()) 
+    pixels = list(image.getdata()) 
 
 #from here, with this pixel data, we need to convert to binary, and then read the pixel data for the password.
 #after that is done, we will return the pasword.
