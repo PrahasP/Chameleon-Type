@@ -104,9 +104,41 @@ class PasswordScreen(QMainWindow):
                 # Call the imageEncoder function with the provided password
                 imageEncoder.encode_password_in_image(self.image, password, "Encoded Passwords/encoded_image.png")
                 print("Image encoding completed.")
+                
+                # Show the success screen
+                self.success_screen = SuccessScreen()
+                self.success_screen.show()
                 self.close()
             except Exception as e:
                 print("Failed to encode image:", e)
+
+
+class SuccessScreen(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Image Encoded!")
+        self.setMinimumSize(400, 300)
+
+        frame = QFrame()
+        self.layout = QVBoxLayout(frame)
+        self.layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.label = QLabel("Encoded!")
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label.setStyleSheet("font-size: 24px; font-weight: bold; color: white;")
+        self.layout.addWidget(self.label)
+
+        self.return_button = QPushButton("Return to Main Screen")
+        self.return_button.clicked.connect(self.return_to_main)
+        self.layout.addWidget(self.return_button)
+
+        self.setCentralWidget(frame)
+
+    def return_to_main(self):
+        from gui_main import MainScreen  # Import here to avoid circular imports
+        self.main_screen = MainScreen()
+        self.main_screen.show()
+        self.close()
 
 
 if __name__ == "__main__":

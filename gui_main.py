@@ -4,7 +4,7 @@ from PyQt5.QtCore import Qt
 from gui_encode import EncodeScreen  # Import the screen from gui_encode.py
 from gui_decode import DecodeScreen  # Import the screen from gui_decode.py
 
-class SimpleScreen(QMainWindow):
+class MainScreen(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("The Lion")
@@ -56,6 +56,6 @@ if __name__ == "__main__":
         background-color: rgb(60, 20, 255);
     }
     """)
-    window = SimpleScreen()
+    window = MainScreen()
     window.show()
     sys.exit(app.exec_())
