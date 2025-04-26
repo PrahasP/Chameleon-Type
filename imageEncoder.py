@@ -6,6 +6,24 @@ def password_to_binary(password: str, delimiter: str = "#end#") -> str:
     #converts the new text into binary and returns it. 
     return ''.join(format(ord(char), '08b') for char in full_text) 
 
+def passwordEncryption(password):
+    encryptedPassword = ""
+    #bro idk man, this is the first solution i came up with
+    #icrashingout
+    key = "~!@#$%^&*()_+`1234567890-=QWERTYUIOP{|}qwertyuiop[]\ASDFGHJKL:\"asdfghjkl;'ZXCVBNM<>?zxcvbnm,./"
+    preKey = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()_+`-={|}[]\:\";'<>?,./"
+
+    #Encrypting the password with the key
+    for passwordChar in range (len(password)):
+        #Search through the prekey to find the char position for the key
+        for curChar in range (len(preKey)):
+            #If we find the char position, concatenate the encrypted password with the key char at the current position
+            if passwordChar == preKey[curChar]:
+                encryptedPassword += key[curChar]
+                break
+
+    return encryptedPassword
+
 def encode_password_in_image(image: Image.Image, password: str, output_path: str): #this will take in a password input, an image, and encode the picture, and create a new image.
     #opens the image and converts it to RGB format so we can read the pixel RGB values.
     image = image.convert('RGB')
