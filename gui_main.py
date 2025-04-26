@@ -1,6 +1,7 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QFrame, QPushButton
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QFrame, QPushButton, QLabel
 from PyQt5.QtCore import Qt
+from gui_encode import EncodeScreen  # Import the screen from gui_encode.py
 
 class SimpleScreen(QMainWindow):
     def __init__(self):
@@ -12,13 +13,23 @@ class SimpleScreen(QMainWindow):
         layout = QVBoxLayout(frame)
         layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
+        self.label = QLabel("The Lion")
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label.setStyleSheet("font-size: 24px; font-weight: bold; color: white;")
+        layout.addWidget(self.label)
+
         self.button1 = QPushButton("Encode")
+        self.button1.clicked.connect(self.open_encode_screen)  # Connect to the encode screen
         layout.addWidget(self.button1)
 
         self.button2 = QPushButton("Decode")
         layout.addWidget(self.button2)
 
         self.setCentralWidget(frame)
+
+    def open_encode_screen(self):
+        self.encode_screen = EncodeScreen()  # Create an instance of the EncodeScreen
+        self.setCentralWidget(self.encode_screen) # Set it to be the main widget of the window
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
