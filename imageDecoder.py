@@ -12,11 +12,8 @@ def binary_to_password(binary_data, delimiter = "#end#"): #takes the binary pass
     return password
 
 def decode_password_from_image(image_path): #decodes the encoded image, getting up binary data to convert into a password.
-#opens the image and converts it to RGB format so we can read the pixel RGB values.
+    #opens the image and converts it to RGB format so we can read the pixel RGB values.
     img = Image.open(image_path).convert('RGB') 
-
-    #find width and height of the image, so we can calculate the maximum capacity of the image.
-    width, height = img.size()
 
     #gets the pixel data from the image, and inserts it into a list. 
     pixels = list(img.getdata()) 
