@@ -1,32 +1,15 @@
+import cryptocode
 from PIL import Image
 
-def binary_to_password(binary_data: str, delimiter: str = "#end#") -> str: #takes the binary password that would be decoded and convert it back into characters to use.
-    #breaks apart the binary into each character( 8 bit)
-    chars = [binary_data [i : i + 8] for i in range(0, len(binary_data), 8)] 
-
-    #converts the 8 bit into integers, then converts the intergers into characters.
-    decoded = ''.join(chr(int(char, 2)) for char in chars) 
-    
-    #stop at the delimiter we set up, and splits it from the password we just decoded.
-    password = decoded.split(delimiter)[0] 
-    return password
-
-#Decrypts an encrypted password with the key
-def passwordDecryption(encryptedPassword):
-    password = ""
-    key = "~!@#$%^&*()_+`1234567890-=QWERTYUIOP{|}qwertyuiop[]\ASDFGHJKL:\"asdfghjkl;'ZXCVBNM<>?zxcvbnm,./"
-    preKey = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()_+`-={|}[]\:\";'<>?,./"
-
-    #Decrypting the password with preKey
-    for passwordChar in range (len(encryptedPassword)):
-        #Search through the key to find char position of preKey
-        for curChar in  range (len(key)):
-            #If we find the char position, concatenate the password with the preKey char at the current position
-            if passwordChar == key[curChar]:
-                password += preKey[curChar]
-                break
-
-    return password
+def binary_to_password(key: str, binary_data: str, delimiter: str = "#end#") -> str: #takes the binary password that would be decoded and convert it back into characters to use.
+    #converts binary data into characters
+    chars = [chr(int(binary_data[i : i + 8], 2)) for i in range(0, len(binary_data), 8)]
+    encrypted = ''.join(chars)
+    #since the delimiter was not encrypted, we know where to stop. Split off delimiter from encrypted data
+    password = encrypted.split(delimiter)[0]
+    #decrypt the password
+    decrypted = cryptocode.decrypt(password, key)
+    return decrypted
 
 def decode_password_from_image(image: Image.Image): #decodes the encoded image, getting up binary data to convert into a password.
     #opens the image and converts it to RGB format so we can read the pixel RGB values.
@@ -52,6 +35,6 @@ def decode_password_from_image(image: Image.Image): #decodes the encoded image, 
     binary_data_string = ''.join(binary_data) #this will combine the binary data into a single string.
 
     #with this data, we can then convert it back into a password.
-    password = binary_to_password(binary_data_string) #this here will convert the binary data into a password until it hits the delimiter.
+    password = binary_to_password("fortnite", binary_data_string) #this here will convert the binary data into a password until it hits the delimiter.
     #return the password we decoded from the image. 
     return password

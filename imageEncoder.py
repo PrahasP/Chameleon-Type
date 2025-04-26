@@ -1,34 +1,21 @@
 from PIL import Image
+import cryptocode
 
-def password_to_binary(password: str, delimiter: str = "#end#") -> str:
-    # Converts the password to binary, with a delimiter to mark the end
-    full_text: str = password + delimiter
-    #converts the new text into binary and returns it. 
-    return ''.join(format(ord(char), '08b') for char in full_text) 
-
-def passwordEncryption(password):
-    encryptedPassword = ""
-    #bro idk man, this is the first solution i came up with
-    #icrashingout
-    key = "~!@#$%^&*()_+`1234567890-=QWERTYUIOP{|}qwertyuiop[]\ASDFGHJKL:\"asdfghjkl;'ZXCVBNM<>?zxcvbnm,./"
-    preKey = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()_+`-={|}[]\:\";'<>?,./"
-
-    #Encrypting the password with the key
-    for passwordChar in range (len(password)):
-        #Search through the prekey to find the char position for the key
-        for curChar in range (len(preKey)):
-            #If we find the char position, concatenate the encrypted password with the key char at the current position
-            if passwordChar == preKey[curChar]:
-                encryptedPassword += key[curChar]
-                break
-
-    return encryptedPassword
+def password_to_binary(key: str, password: str, delimiter: str = "#end#") -> str:
+    # encrypt the password with a key
+    encoded = cryptocode.encrypt(password, key)
+    #convert the password and delimiter to binary
+    password = ''.join(format(ord(char), '08b') for char in encoded)
+    delimiter_binary = ''.join(format(ord(char), '08b') for char in delimiter)
+    #combine the two and return it
+    full_password = password + delimiter_binary
+    return full_password
 
 def encode_password_in_image(image: Image.Image, password: str, output_path: str): #this will take in a password input, an image, and encode the picture, and create a new image.
     #opens the image and converts it to RGB format so we can read the pixel RGB values.
     image = image.convert('RGB')
     #converts the password into binary format.
-    binary_password: str = password_to_binary(password) 
+    binary_password: str = password_to_binary("fortnite", password)
 
     #find width and height of the image, so we can calculate the maximum capacity of the image.
     width, height = image.size
