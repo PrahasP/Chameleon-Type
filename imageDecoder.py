@@ -11,6 +11,23 @@ def binary_to_password(binary_data: str, delimiter: str = "#end#") -> str: #take
     password = decoded.split(delimiter)[0] 
     return password
 
+#Decrypts an encrypted password with the key
+def passwordDecryption(encryptedPassword):
+    password = ""
+    key = "~!@#$%^&*()_+`1234567890-=QWERTYUIOP{|}qwertyuiop[]\ASDFGHJKL:\"asdfghjkl;'ZXCVBNM<>?zxcvbnm,./"
+    preKey = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890~!@#$%^&*()_+`-={|}[]\:\";'<>?,./"
+
+    #Decrypting the password with preKey
+    for passwordChar in range (len(encryptedPassword)):
+        #Search through the key to find char position of preKey
+        for curChar in  range (len(key)):
+            #If we find the char position, concatenate the password with the preKey char at the current position
+            if passwordChar == key[curChar]:
+                password += preKey[curChar]
+                break
+
+    return password
+
 def decode_password_from_image(image: Image.Image): #decodes the encoded image, getting up binary data to convert into a password.
     #opens the image and converts it to RGB format so we can read the pixel RGB values.
     image = image.convert('RGB')
