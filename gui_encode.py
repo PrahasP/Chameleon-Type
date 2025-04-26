@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PIL import Image
 import imageEncoder
+import os
 
 
 class EncodeScreen(QMainWindow):
@@ -139,7 +140,14 @@ class NamingScreen(QMainWindow):
         if self.image and self.password and image_name:
             try:
                 # Call the imageEncoder function with the provided password and image name
-                imageEncoder.encode_password_in_image(self.image, self.password, f"Encoded Passwords/{image_name}.png")
+                # Check if the "Encoded Passwords" folder exists, create it if not
+                output_folder = "Encoded Passwords"
+                if not os.path.exists(output_folder):
+                    os.makedirs(output_folder)
+                    print(f"Created folder: {output_folder}")
+
+                # Encode the password in the image and save it
+                imageEncoder.encode_password_in_image(self.image, self.password, f"{output_folder}/{image_name}.png")
                 print("Image encoding completed.")
 
                 # Show the success screen
