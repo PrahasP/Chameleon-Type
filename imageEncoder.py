@@ -14,8 +14,9 @@ def password_to_binary(key: str, password: str, delimiter: str = "#end#") -> str
 def encode_password_in_image(image: Image.Image, password: str, output_path: str): #this will take in a password input, an image, and encode the picture, and create a new image.
     #opens the image and converts it to RGB format so we can read the pixel RGB values.
     image = image.convert('RGB')
+
     #converts the password into binary format.
-    binary_password: str = password_to_binary("fortnite", password)
+    binary_password: str = password_to_binary("!T&*(EIUGHy8fdihd89oj3g8g3@UHGYGg2786f<L:W<:ldl;,,.;LOKEOPJO#p)", password)
 
     #find width and height of the image, so we can calculate the maximum capacity of the image.
     width, height = image.size

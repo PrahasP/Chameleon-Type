@@ -35,6 +35,6 @@ def decode_password_from_image(image: Image.Image): #decodes the encoded image, 
     binary_data_string = ''.join(binary_data) #this will combine the binary data into a single string.
 
     #with this data, we can then convert it back into a password.
-    password = binary_to_password("fortnite", binary_data_string) #this here will convert the binary data into a password until it hits the delimiter.
+    password = binary_to_password("!T&*(EIUGHy8fdihd89oj3g8g3@UHGYGg2786f<L:W<:ldl;,,.;LOKEOPJO#p)", binary_data_string) #this here will convert the binary data into a password until it hits the delimiter.
     #return the password we decoded from the image. 
     return password
