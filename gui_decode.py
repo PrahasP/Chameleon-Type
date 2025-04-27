@@ -12,7 +12,7 @@ import imageDecoder
 class DecodeScreen(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("The Lion: Encode")
+        self.setWindowTitle("Chameleopn Type: Decode")
         self.setMinimumSize(600, 400)
 
         self.image = None  # Image that we're gonna decode

@@ -7,14 +7,14 @@ from gui_decode import DecodeScreen  # Import the screen from gui_decode.py
 class MainScreen(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("The Lion")
+        self.setWindowTitle("Chameleon Type")
         self.setMinimumSize(400, 300)
 
         frame = QFrame()
         layout = QVBoxLayout(frame)
         layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.label = QLabel("The Lion")
+        self.label = QLabel("Chameleon Type")
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.setStyleSheet("font-size: 24px; font-weight: bold; color: white;")
         layout.addWidget(self.label)

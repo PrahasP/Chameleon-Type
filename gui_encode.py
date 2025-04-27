@@ -10,7 +10,7 @@ import os
 class EncodeScreen(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("The Lion: Encode")
+        self.setWindowTitle("Chameleon Type: Encode")
         self.setMinimumSize(400, 300)
 
         self.image = None  # Image that we're gonna encode
