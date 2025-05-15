@@ -58,16 +58,21 @@ class DecodeScreen(QMainWindow):
         self.load_images_from_folder("Encoded Passwords")
 
     def load_images_from_folder(self, folder_path):
-        if not os.path.exists(folder_path):
-            os.makedirs(folder_path)
+        enc_file = os.path.join(folder_path, "directories.enc")
+        if not os.path.exists(enc_file):
+            return
 
-        for file_name in os.listdir(folder_path):
-            if file_name.lower().endswith(('.png')):
+        with open(enc_file, "r") as f:
+            for line in f:
+                file_name = line.strip()
+                if not file_name:
+                    continue
                 file_path = os.path.join(folder_path, file_name)
-                pixmap = QPixmap(file_path).scaled(100, 100, Qt.AspectRatioMode.KeepAspectRatio)
-                item = QListWidgetItem(QIcon(pixmap), file_name)
-                item.setData(Qt.UserRole, file_path)
-                self.image_list.addItem(item)
+                if file_name.lower().endswith('.png') and os.path.isfile(file_path):
+                    pixmap = QPixmap(file_path).scaled(100, 100, Qt.AspectRatioMode.KeepAspectRatio)
+                    item = QListWidgetItem(QIcon(pixmap), file_name)
+                    item.setData(Qt.UserRole, file_path)
+                    self.image_list.addItem(item)
 
     def display_image(self, item):
         file_path = item.data(Qt.UserRole)

@@ -126,31 +126,64 @@ class NamingScreen(QMainWindow):
         self.layout.addWidget(self.label)
 
         self.name_input = QLineEdit()
-        self.name_input.setPlaceholderText("Enter image name here (e.g., encoded_image.png)")
+        self.name_input.setPlaceholderText("Enter image name here (e.g., encoded_image)")
         self.layout.addWidget(self.name_input)
 
-        self.encode_button = QPushButton("Save Encoded Image")
-        self.encode_button.clicked.connect(self.encode_image)
-        self.layout.addWidget(self.encode_button)
+        self.next_button = QPushButton("Next")
+        self.next_button.clicked.connect(self.openDirectoryScreen)
+        self.layout.addWidget(self.next_button)
 
         self.setCentralWidget(frame)
 
-    def encode_image(self):
+    def openDirectoryScreen(self):
         image_name = self.name_input.text()
         if self.image and self.password and image_name:
-            try:
-                # Call the imageEncoder function with the provided password and image name
-                # Check if the "Encoded Passwords" folder exists, create it if not
-                output_folder = "Encoded Passwords"
-                if not os.path.exists(output_folder):
-                    os.makedirs(output_folder)
-                    print(f"Created folder: {output_folder}")
+            self.directory_screen = DirectoryScreen(self.image, self.password, image_name)
+            self.directory_screen.show()
+            self.close()
 
-                # Encode the password in the image and save it
-                imageEncoder.encode_password_in_image(self.image, self.password, f"{output_folder}/{image_name}.png")
+
+class DirectoryScreen(QMainWindow):
+    def __init__(self, image, password, image_name):
+        super().__init__()
+        self.setWindowTitle("Select Save Directory")
+        self.setMinimumSize(400, 200)
+
+        self.image = image
+        self.password = password
+        self.image_name = image_name
+
+        frame = QFrame()
+        self.layout = QVBoxLayout(frame)
+        self.layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.label = QLabel("Choose a directory to save the encoded image:")
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label.setStyleSheet("font-size: 18px; font-weight: bold; color: white;")
+        self.layout.addWidget(self.label)
+
+        self.dir_button = QPushButton("Select Directory")
+        self.dir_button.clicked.connect(self.select_directory)
+        self.layout.addWidget(self.dir_button)
+
+        self.setCentralWidget(frame)
+
+    def select_directory(self):
+        directory = QFileDialog.getExistingDirectory(self, "Select Directory")
+        if directory:
+            try:
+                output_path = os.path.join(directory, f"{self.image_name}.png")
+                imageEncoder.encode_password_in_image(self.image, self.password, output_path)
                 print("Image encoding completed.")
 
-                # Show the success screen
+                # Append the full file path (including file name) to "Encoded Passwords/directories.enc"
+                enc_dir_file = os.path.join("Encoded Passwords", "directories.enc")
+                os.makedirs(os.path.dirname(enc_dir_file), exist_ok=True)
+                # Normalize the path to use backslashes on Windows
+                normalized_path = os.path.normpath(output_path)
+                with open(enc_dir_file, "a", encoding="utf-8") as f:
+                    f.write(normalized_path + "\n")
+
                 self.success_screen = SuccessScreen()
                 self.success_screen.show()
                 self.close()
